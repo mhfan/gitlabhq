@@ -21,7 +21,7 @@ namespace :gitlab do
       check_log_writable
       check_tmp_writable
       check_init_script_exists
-      check_init_script_up_to_date
+      #check_init_script_up_to_date
       check_satellites_exist
       check_redis_version
       check_git_version
