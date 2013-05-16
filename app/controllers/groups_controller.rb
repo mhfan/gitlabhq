@@ -19,8 +19,10 @@ class GroupsController < ApplicationController
   end
 
   def create
+    group_path = params[:group][:name]
+    params[:group][:name] = params[:group][:name].parameterize
     @group = Group.new(params[:group])
-    @group.path = @group.name.dup.parameterize if @group.name
+    @group.path = group_path if @group.name
     @group.owner = current_user
 
     if @group.save
@@ -107,7 +109,7 @@ class GroupsController < ApplicationController
   protected
 
   def group
-    @group ||= Group.find_by_path(params[:id])
+    @group ||= Group.find_by_name(params[:id])
   end
 
   def projects

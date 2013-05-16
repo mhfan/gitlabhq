@@ -76,8 +76,8 @@ class Project < ActiveRecord::Base
   validates :creator, presence: true
   validates :description, length: { within: 0..2000 }
   validates :name, presence: true, length: { within: 0..255 },
-            format: { with: Gitlab::Regex.project_name_regex,
-                      message: "only letters, digits, spaces & '_' '-' '.' allowed. Letter should be first" }
+            format: { with: Gitlab::Regex.path_regex,
+                      message: "only letters, digits & '_' '-' '.' allowed. Letter should be first" }
   validates :path, presence: true, length: { within: 0..255 },
             exclusion: { in: Gitlab::Blacklist.path },
             format: { with: Gitlab::Regex.path_regex,
@@ -128,11 +128,13 @@ class Project < ActiveRecord::Base
 
     def find_with_namespace(id)
       if id.include?("/")
-        id = id.split("/")
-        namespace = Namespace.find_by_path(id.first)
+        ns = File.dirname id
+        namespace = Namespace.find_by_name(ns)
+        namespace = Namespace.find_by_path(ns) unless namespace
         return nil unless namespace
 
-        where(namespace_id: namespace.id).find_by_path(id.second)
+        ns = file.basename id
+        where(namespace_id: namespace.id).find_by_name(ns)
       else
         where(path: id, namespace_id: nil).last
       end
@@ -169,14 +171,14 @@ class Project < ActiveRecord::Base
 
   def to_param
     if namespace
-      namespace.path + "/" + path
+      namespace.name + "/" + name
     else
-      path
+      name
     end
   end
 
   def web_url
-    [Gitlab.config.gitlab.url, path_with_namespace].join("/")
+    [Gitlab.config.gitlab.url, name_with_namespace].join("/")
   end
 
   def build_commit_note(commit)

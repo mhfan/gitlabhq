@@ -15,7 +15,11 @@ module Gitlab
     end
 
     def path_regex
-      default_regex
+      /\A[a-zA-Z0-9_\-\.]*\z/
+    end
+
+    def sub_path_regex
+      /\A[a-zA-Z0-9_\-\.\/]*\z/
     end
 
     protected

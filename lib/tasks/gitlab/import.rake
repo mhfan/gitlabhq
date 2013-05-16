@@ -49,7 +49,7 @@ namespace :gitlab do
             group = Group.find_by_path(group_name)
             # create group namespace
             if !group
-              group = Group.new(:name => group_name)
+              group = Group.new(:name => group_name.dup.tr('/', '_'))
               group.path = group_name
               group.owner = user
               if group.save

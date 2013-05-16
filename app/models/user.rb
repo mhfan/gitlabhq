@@ -101,7 +101,9 @@ class User < ActiveRecord::Base
   #
   # Validations
   #
-  validates :name, presence: true
+  validates :name, presence: true,
+            format: { with: Gitlab::Regex.username_regex,
+                      message: "only letters, digits & '_' '-' '.' allowed. Letter should be first" }
   validates :email, presence: true, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/ }
   validates :bio, length: { within: 0..255 }
   validates :extern_uid, allow_blank: true, uniqueness: {scope: :provider}
