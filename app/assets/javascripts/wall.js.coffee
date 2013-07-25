@@ -58,13 +58,15 @@ class Wall
     form.show()
   
   renderNote: (note) ->
+    url = "/files/note/"
+    url = gon.relative_url_root + url if !!gon.relative_url_root
     template = @noteTemplate()
     template = template.replace('{{author_name}}', note.author.name)
     template = template.replace(/{{created_at}}/g, note.created_at)
     template = template.replace('{{text}}', simpleFormat(note.body))
 
     if note.attachment
-      file = '<i class="icon-paper-clip"/><a href="/files/note/' + note.id + '/' + note.attachment + '">' + note.attachment + '</a>'
+      file = '<i class="icon-paper-clip"/><a href="' + url + note.id + '/' + note.attachment + '">' + note.attachment + '</a>'
     else
       file = ''
     template = template.replace('{{file}}', file)
